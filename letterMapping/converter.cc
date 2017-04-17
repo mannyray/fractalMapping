@@ -25,12 +25,7 @@ int main(int argc, char *argv[]){
 	
 	string output_file = argv[2];
 	ofstream ofile(output_file.c_str());
-	
-
-
-
-	
-	
+		
 	string type;
 	int d1,d2,d3;
 	infile>>type;ofile<<"P2"<<" ";
