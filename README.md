@@ -8,11 +8,11 @@
 	2. [regularFractalWithRotation](#rfwr)
 	3. [wavelet](#w)
 	4. [letterMapping](#lm)
-4.	[Sources](#sources)
+
 
 
 <a name="d">
-##1. Description
+## Description
 </a>
 
 Set of libraries and code for running fractal compression and other related code. The fractal compression code is a lossy way of compressing images that keeps track of similarity of bigger blocks within an image to smaller blocks. By storing these similarities as mappings we can recreate an image that is very similar to the original image. 
@@ -32,7 +32,7 @@ An image to showcase compression results will be ['Lenna'](http://www.cs.cmu.edu
 
 
 <a name="lc">
-##2. Comments on the code
+## Comments on the code
 </a>
 
 Each fractal compression code implementation stored in directories (_letterMapping_, _regularFractal_, _regularFractalWithRotation_, _wavelet_) contains a _compress.cc_ file and _decompress.cc_ file. _compress.cc_ is responsible for creating a fractal mapping and _decompress.cc_ is responsible for reading in a mapping and producing an image encrypted in the mapping. 
@@ -49,7 +49,7 @@ Some additional requirements and commands may be required for the directories.
 
 
 <a name="lf">
-##3. Library Features
+## Library Features
 </a>
 
 Next few sections will discuss features and results of different fractal compression implementations. The algorithms written do not encode the mappings in the most space efficient format, but simple methods to do add this and results of such actions is discussed.
@@ -59,7 +59,7 @@ The fractal compression algorithms have a very 'slow' nature to them because the
 
 
 <a name="rf">
-###regularFractal
+### regularFractal
 </a>
 
 The algorithm takes in the original image and breaks it into 16 by 16 pixel blocks _B_. Then for all 8 by 8 blocks _A_ in the image, the algorithm finds the optimal _B_ such that when _B_ is blurred down to an 8 by 8 and transformed with a basic scaling and grayscale shift, it best approximates the _A_ block. These mappings are then written to file for each _A_ block in chronological order.
@@ -79,7 +79,7 @@ The algorithm reads in the starting image, mappings and then for each 8 by 8 blo
 ![image](sample_images/regular.png)
 
 <a name="rfwr">
-###regularFractalWithRotation
+### regularFractalWithRotation
 </a>
 
 
@@ -88,7 +88,7 @@ This feature is similar to regularFractal, except now the 16 by 16 blocks can be
 ![image](sample_images/regularWithRotation.png)
 
 <a name="w">
-###wavelet
+### wavelet
 </a>
 
 The code in this sections requires the use of matlab in order to create the wavelet compression. It breaks an image into its wavelet decomposition and approximates the different levels by creating mappings between the child and parent levels.
@@ -97,7 +97,7 @@ The code in this sections requires the use of matlab in order to create the wave
 ![image](sample_images/lenna_approx_3.png)
 
 <a name="lm">
-###4. letterMapping
+###  letterMapping
 </a>
 
 Given an image and a set of blocks, we can approximate the image with the best fitting blocks. In the example below we approximate 'lenna' with alphabet characters in 8 by 8 pixel blocks. The letter that is chosen to approximate an 8 by 8 block within 'lenna' is the letter than reduces the error when subtracting the difference between letter block and image block.
