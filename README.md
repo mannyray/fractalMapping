@@ -63,12 +63,43 @@ The fractal compression algorithms have a very 'slow' nature to them because the
 regularFractal
 </a>
 </h2>
-The algorithm takes in the original image and breaks it into 16 by 16 pixel blocks _B_. Then for all 8 by 8 blocks _A_ in the image, the algorithm finds the optimal _B_ such that when _B_ is blurred down to an 8 by 8 and transformed with a basic scaling and grayscale shift, it best approximates the _A_ block. These mappings are then written to file for each _A_ block in chronological order.
+
+<h5>
+Compression:
+</h5>
+Here is a diagram that will be used to explain the algorithm:
+
+![image](sample_images/fractal_mapping_exp_1.png)
+
+
+<h6>
+1.
+</h6>
+We start off with the original image (in this example it is 32 by 32 pixels) and split it into two copies. One with 8 by 8 pixels blocks and the other with 16 by 16 pixel blocks.
+
+<h6>
+2.
+</h6>
+We take the 16 by 16 split image and reduce each block to an 8 by 8 pixel approximation by averaging 2 by 2 pixel blocks into one pixel.
+
+<h6>
+3.
+</h6>
+For each possible pairing between an 8 by 8 block from original split and the 16 by 16 reduced split we compute a mapping. The mapping is defined as a scalar multiple **a** and grayscale shift **B** computed through simple linear regression (by treating each block as a vector). 
+
+
+<h6>
+4.
+</h6>
+We look at all of the possible mappings between a single 8 by 8 block **C** and all of the reduced blocks computed in part 3. We store the mapping for the **C** block that produces the smallest error. The error is defined as taking the Euclidean norm of the difference between **C** and the appropriate mapping(computed in part 3) on a reduced block. We need to store each ideal mapping for each **C** block. This requires storing the **a**, **b** and the position of the 16 by 16 reduced block (in our example the position of the green block in 16 by 16 split is 2).
+
 
 
 Each 8 by 8 block requires to store its approximating 16 by 16 block, scaling and grayscale shift. The values of scaling and grayscale are doubles (8 bytes) and approximating block number can be stored as an integer (4 bytes). This means that for each 8 by 8 block you need to store (8+8+4=20) bytes as an upperbound. For lenna, a 512 by 512 pixel image with 4096 - 8 by 8 blocks, that requires 4096*20=81920 bytes for mappings whereas lenna stores in png format requires 264069 bytes.  The compression can be optimized even further at the expense of precision. The code can be modified to limit the number of digits stored in scaling/grayscale in order to save space.
 
-
+<h5>
+Decompression:
+</h5>
 Once you have a mapping, you can then recreate the image approximation using _decompress.cc_ with any starting image such as the following:
 
 ![image](sample_images/a.png)
