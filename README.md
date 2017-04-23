@@ -46,17 +46,17 @@ To compile the compress/decompress programs (within directory the program is loc
 g++ -std=c++11 -o (de)compress (de)compress.cc ../blockImage.cc ../compareImages.cc
 ```
 
-Some additional requirements and commands may be required for the directories.
+Some additional requirements and commands may be required for the directories. Those requirements will be described when appropriate.
 
 <h2>
 <a name="lf">
 Library Features
 </a>
 </h2>
-Next few sections will discuss features and results of different fractal compression implementations. The algorithms written do not encode the mappings in the most space efficient format, but simple methods to do add this and results of such actions is discussed.
+Next few sections will discuss features and results of different fractal compression implementations. The algorithms written do not encode the mappings in the most space efficient format, but simple methods to add this and results of such actions is discussed.
 
 
-The fractal compression algorithms have a very 'slow' nature to them because they require finding optimal mappings between pixel blocks in an image. This requires checking all possible block to block comparisons. No additional comments on runtime will be made other than compress and decompress code can take a few seconds to run for a standart 512x512 pixel image such as 'lenna'.
+The fractal compression algorithms have a very 'slow' nature to them because they require finding optimal mappings between pixel blocks in an image. This requires checking all possible block to block combinations. No additional comments on runtime will be made other than compress and decompress code can take a few seconds to run for a standart 512x512 pixel image such as 'lenna'.
 
 <h2>
 <a name="rf">
@@ -65,7 +65,7 @@ regularFractal
 </h2>
 
 <h5>
-Compression:
+Compression (compress.cc):
 </h5>
 Here is a diagram that will be used to explain the algorithm:
 
@@ -91,11 +91,14 @@ For each possible pairing between an 8 by 8 block from original split and the 16
 <h6>
 4.
 </h6>
-We look at all of the possible mappings between a single 8 by 8 block **C** and all of the reduced blocks computed in part 3. We store the mapping for the **C** block that produces the smallest error. The error is defined as taking the Euclidean norm of the difference between **C** and the appropriate mapping(computed in part 3) on a reduced block. We need to store each ideal mapping for each **C** block. This requires storing the **a**, **b** and the position of the 16 by 16 reduced block (in our example the position of the green block in 16 by 16 split is 2).
+We look at all of the possible mappings between a single 8 by 8 original split block <b>C</b> and all of the reduced blocks computed in part 3. We store the mapping for the <b>C</b> block that produces the smallest error. The error is defined as taking the Euclidean norm of the difference between <b>C</b> and the appropriate mapping(computed in part 3) on a reduced block. We need to store each ideal mapping for each <b>C</b> block. This requires storing the <b>a</b>, <b>b</b> and the position of the 16 by 16 reduced block (in our example the position of the green block in 16 by 16 split is 2).
 
 
 
-Each 8 by 8 block requires to store its approximating 16 by 16 block, scaling and grayscale shift. The values of scaling and grayscale are doubles (8 bytes) and approximating block number can be stored as an integer (4 bytes). This means that for each 8 by 8 block you need to store (8+8+4=20) bytes as an upperbound. For lenna, a 512 by 512 pixel image with 4096 - 8 by 8 blocks, that requires 4096*20=81920 bytes for mappings whereas lenna stores in png format requires 264069 bytes.  The compression can be optimized even further at the expense of precision. The code can be modified to limit the number of digits stored in scaling/grayscale in order to save space.
+<h5>
+Compression rate:
+</h5>
+Each 8 by 8 block requires to store its approximating 16 by 16 block position, scaling and grayscale shift values. The values of scaling and grayscale are doubles (8 bytes) and approximating block number can be stored as an integer (4 bytes). This means that for each 8 by 8 block you need to store (8+8+4=20) bytes as an upperbound. For lenna, a 512 by 512 pixel image with 4096 - 8 by 8 blocks, that requires 4096*20=81920 bytes for mappings whereas lenna stored in png format requires 264069 bytes.  The compression can be optimized even further at the expense of precision. The code can be modified to limit the number of digits stored in scaling/grayscale in order to save space.
 
 <h5>
 Decompression:
@@ -104,18 +107,38 @@ Once you have a mapping, you can then recreate the image approximation using _de
 
 ![image](sample_images/a.png)
 
-The algorithm reads in the starting image, mappings and then for each 8 by 8 block _A_ in starting, grabs its matching 16 by 16 block _B_ and maps it onto the _A_ block. The starting image is then replaced with the results of mappings and the process is repeated multiple times to produce the following:
+The algorithm is very similar to the compression one and we can use the same diagram as in compression section to explain it:
+<h6>
+1.
+</h6>
+
+We grab the starting image and split it into two copies. The 8 by 8 split image is what we will be mapping onto and the 16 by 16 split image is where we will be mapping from. 
+
+<h6>
+2.
+</h6>
+We take the 16 by 16 split image and reduce each block to an 8 by 8 pixel approximation by averaging 2 by 2 pixel blocks into one pixel.
+
+<h6>
+3.
+</h6>
+For each 8 by 8 block in original 8 by 8 split we replace the block with the appropriate 16 by 16 reduced block described in mapping, multiplied by scale factor <b>a</b> and adding the grayscale shift <b>b</b>.
 
 
+<h6>
+4.
+</h6>
+The mapped image in the 8 by 8 block original split now becomes are new 'starting image'. Proceed to step 1. Repeat this about 20 times. After completing this we get the following result:
 
 ![image](sample_images/regular.png)
+
 <h2>
 <a name="rfwr">
 regularFractalWithRotation
 </a>
 </h2>
 
-This feature is similar to regularFractal, except now the 16 by 16 blocks can be compared to 8 by 8 blocks by rotation as well. The mappings now also need to store how the 16 by 16 block was rotated. This adds an addition 2 bits per 8 by 8 block. A very negligible cost given that the decompressed image now looks much better than regularFractal(look at the lips and eyes). 
+This feature is similar to regularFractal, except now the optimal mappings from 16 by 16 reduced blocks to 8 by 8 blocks can include rotation in addition to scaling and grayscale shift. The mappings now also need to store how the 16 by 16 block was rotated. This adds an addition 2 bits per 8 by 8 block. A very negligible cost given that the decompressed image now looks much better than regularFractal(look at the lips and eyes). 
 
 ![image](sample_images/regularWithRotation.png)
 <h2>
@@ -123,10 +146,18 @@ This feature is similar to regularFractal, except now the 16 by 16 blocks can be
 wavelet
 </a>
 </h2>
-The code in this sections requires the use of matlab in order to create the wavelet compression. It breaks an image into its wavelet decomposition and approximates the different levels by creating mappings between the child and parent levels.
+The code in this section requires the use of matlab in order to create the Haar-wavelet decomposition. It breaks an image into its wavelet decomposition. The algorithim then constructs mappings between different levels of the wavelet decomposition by creating mappings between the child and parent levels (child is the smaller image block).
 
+A 2 level wavelet decomposition may look something like this: 
+![image](https://upload.wikimedia.org/wikipedia/commons/e/e0/Jpeg2000_2-level_wavelet_transform-lichtenstein.png)
+
+Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). When reconstructing the parent blocks give the smallest child block, we create the parent sub blocks by iterating a single time (unlike in fractal mapping where the decompression requires about 20 iterations).
+
+Here is an example of lenna compressed using the wavelet approach and then recreated:
 
 ![image](sample_images/lenna_approx_3.png)
+
+The results are not the best, but that can be blamed on the amount of levels used in the decomposition as well as the properties of Haar-wavelet decomposition. The original 'lenna' in png format is about 264069 bytes, the wavelet decomposition takes up:
 <h2>
 <a name="lm">
 letterMapping
