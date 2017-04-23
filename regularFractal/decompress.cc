@@ -64,9 +64,6 @@ int main(int argc, char *argv[]){
 		//go through alpha_beta_store alongside with blockStore2 (8*8)'s and map approximated_16s to blockStore2
 		alpha_beta.map(sixteen_by_sixteen, blockStore2);
 	
-		norm = blockStore->differenceNormalized(blockStore2);
-		
-		cout<<"Iteration: "<<iterationCount<<". Norm: "<< norm <<endl;
 		iterationCount++;
 		
 		//output the input and read it in once again
@@ -78,6 +75,8 @@ int main(int argc, char *argv[]){
 		blockStore->writeMatrixPNM(ss);//not the most efficient data transfer, but it works and keeps things simple for now
 		sixteen_by_sixteen->updateMap(blockDimension * 2);
 		sixteen_by_sixteen->readMatrixPNM(ss);//TODO modify blockDimension as a result from blur
+
+		
 	}while(iterationCount < 20 );
 	
 	blockStore2->writeRoundOFF(false);

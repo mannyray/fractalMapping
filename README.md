@@ -60,7 +60,7 @@ The fractal compression algorithms have a very 'slow' nature to them because the
 
 <h2>
 <a name="rf">
-regularFractal
+i. regularFractal
 </a>
 </h2>
 
@@ -85,13 +85,13 @@ We take the 16 by 16 split image and reduce each block to an 8 by 8 pixel approx
 <h6>
 3.
 </h6>
-For each possible pairing between an 8 by 8 block from original split and the 16 by 16 reduced split we compute a mapping. The mapping is defined as a scalar multiple **a** and grayscale shift **B** computed through simple linear regression (by treating each block as a vector). 
+For each possible pairing between an 8 by 8 block from original split and the 16 by 16 reduced split we compute a mapping. The mapping is defined as a scalar multiple <b>a</b> and grayscale shift <b>B</b> computed through simple linear regression (by treating each block as a vector). 
 
 
 <h6>
 4.
 </h6>
-We look at all of the possible mappings between a single 8 by 8 original split block <b>C</b> and all of the reduced blocks computed in part 3. We store the mapping for the <b>C</b> block that produces the smallest error. The error is defined as taking the Euclidean norm of the difference between <b>C</b> and the appropriate mapping(computed in part 3) on a reduced block. We need to store each ideal mapping for each <b>C</b> block. This requires storing the <b>a</b>, <b>b</b> and the position of the 16 by 16 reduced block (in our example the position of the green block in 16 by 16 split is 2).
+We look at all of the possible mappings between a single 8 by 8 original split block <b>C</b> and all of the reduced blocks computed in part 3. We store the mapping for the <b>C</b> block that produces the smallest error. The error is defined as taking the Euclidean norm of the difference between <b>C</b> and the appropriate mapping(computed in part 3) on a reduced block. We need to store each ideal mapping for each <b>C</b> block. This requires storing the <b>a</b>, <b>B</b> and the position of the 16 by 16 reduced block (in our example the position of the green block in 16 by 16 split is 2).
 
 
 
@@ -101,9 +101,9 @@ Compression rate:
 Each 8 by 8 block requires to store its approximating 16 by 16 block position, scaling and grayscale shift values. The values of scaling and grayscale are doubles (8 bytes) and approximating block number can be stored as an integer (4 bytes). This means that for each 8 by 8 block you need to store (8+8+4=20) bytes as an upperbound. For lenna, a 512 by 512 pixel image with 4096 - 8 by 8 blocks, that requires 4096*20=81920 bytes for mappings whereas lenna stored in png format requires 264069 bytes.  The compression can be optimized even further at the expense of precision. The code can be modified to limit the number of digits stored in scaling/grayscale in order to save space.
 
 <h5>
-Decompression:
+Decompression (decompress.cc):
 </h5>
-Once you have a mapping, you can then recreate the image approximation using _decompress.cc_ with any starting image such as the following:
+Once you have a mapping, you can then recreate the image approximation using <i>decompress.cc</i> with any starting image such as the following:
 
 ![image](sample_images/a.png)
 
@@ -128,13 +128,20 @@ For each 8 by 8 block in original 8 by 8 split we replace the block with the app
 <h6>
 4.
 </h6>
-The mapped image in the 8 by 8 block original split now becomes are new 'starting image'. Proceed to step 1. Repeat this about 20 times. After completing this we get the following result:
+After completing one round of mapping our 8 by 8 block split image will look something like this:
+![image](sample_images/single_round.png)
+
+
+<h6>
+5.
+</h6>
+To converge to the lenna image we need to set the 8 by 8 block original split as the new 'starting image'. Proceed to step 1. Repeat this about 20 times. After completing this we get the following result:
 
 ![image](sample_images/regular.png)
 
 <h2>
 <a name="rfwr">
-regularFractalWithRotation
+ii. regularFractalWithRotation
 </a>
 </h2>
 
@@ -143,28 +150,37 @@ This feature is similar to regularFractal, except now the optimal mappings from 
 ![image](sample_images/regularWithRotation.png)
 <h2>
 <a name="w">
-wavelet
+iii. wavelet
 </a>
 </h2>
-The code in this section requires the use of matlab in order to create the Haar-wavelet decomposition. It breaks an image into its wavelet decomposition. The algorithim then constructs mappings between different levels of the wavelet decomposition by creating mappings between the child and parent levels (child is the smaller image block).
+The code in this section requires the use of matlab in order to create the Haar-wavelet decomposition. The algorithm breaks an image into its wavelet decomposition. Then it constructs mappings between different levels of the wavelet decomposition by creating mappings between the child and parent levels (child is the smaller image block).
 
 A 2 level wavelet decomposition may look something like this: 
 ![image](https://upload.wikimedia.org/wikipedia/commons/e/e0/Jpeg2000_2-level_wavelet_transform-lichtenstein.png)
 
-Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). When reconstructing the parent blocks give the smallest child block, we create the parent sub blocks by iterating a single time (unlike in fractal mapping where the decompression requires about 20 iterations).
+Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). When reconstructing the parent blocks only given the smallest child blocks (top left), we recreate the parent sub blocks by iterating a single time by multiplying child blocks by scaling factor and mapping those onto parent blocks (unlike in fractal mapping where the decompression requires about 20 iterations).
 
-Here is an example of lenna compressed using the wavelet approach and then recreated:
+Here is an example of lenna compressed using the wavelet approach and then decompressed:
 
 ![image](sample_images/lenna_approx_3.png)
 
-The results are not the best, but that can be blamed on the amount of levels used in the decomposition as well as the properties of Haar-wavelet decomposition. The original 'lenna' in png format is about 264069 bytes, the wavelet decomposition takes up:
+The results are not the best, but that can be blamed on the amount of levels used in the decomposition as well as the properties of Haar-wavelet decomposition. The original 'lenna' in png format is about 264069 bytes, the wavelet decomposition takes up (TODO)
 <h2>
 <a name="lm">
-letterMapping
+iv. letterMapping
 </a>
 </h2>
 
-Given an image and a set of blocks, we can approximate the image with the best fitting blocks. In the example below we approximate 'lenna' with alphabet characters in 8 by 8 pixel blocks. The letter that is chosen to approximate an 8 by 8 block within 'lenna' is the letter than reduces the error when subtracting the difference between letter block and image block.
+Given an image and a set of blocks, we can approximate the image with the best fitting blocks from another set image. In the example below we approximate 'lenna' with alphabet characters in 8 by 8 pixel blocks. The letter that is chosen to approximate an 8 by 8 block within 'lenna' is the letter than reduces the error when subtracting the difference between letter block and image block.
+
+
+Original block map gathered from here:
+
+![image](sample_images/letters.png)
+
+Lenna approximation by using best fitting blocks from block map:
+
+
 
 ![image](sample_images/lenna_letter.png)
 

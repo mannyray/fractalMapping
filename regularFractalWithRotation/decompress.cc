@@ -63,10 +63,6 @@ int main(int argc, char *argv[]){
 
 		//go through alpha_beta_store alongside with blockStore2 (8*8)'s and map approximated_16s to blockStore2
 		alpha_beta.map(sixteen_by_sixteen, blockStore2);
-	
-		norm = blockStore->differenceNormalized(blockStore2);
-		
-		cout<<"Iteration: "<<iterationCount<<". Norm: "<< norm <<endl;
 		iterationCount++;
 		
 		//output the input and read it in once again
