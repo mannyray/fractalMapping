@@ -65,7 +65,6 @@ class waveletCompression: public compareImages{
 				}
 				
 				map[0] = sumxy/sumx2;
-				std::cout<<map[0]<<std::endl;
 
 				mapOneMatrixToAnother(x, vec1, map, blockDimension);
 				

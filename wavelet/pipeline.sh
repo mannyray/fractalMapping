@@ -7,6 +7,8 @@
 #4.Combine the fractal decompositions into one big array
 #5.Derive the image
 
+
+level_count=6
 if [ "$#" -ne 1 ]; then
     echo "Illegal number of parameters. Please provide image file (example: lenna.pnm)"
 		exit
@@ -37,20 +39,21 @@ mv v.txt "$imageName/v"
 
 #2.
 g++ -std=c++11 wavelet.cc ../blockImage.cc ../compareImages.cc
-./a.out 6 "$imageName/v/v.txt" "$imageName/v/mapping.txt"
-./a.out 6 "$imageName/d/d.txt" "$imageName/d/mapping.txt"
-./a.out 6 "$imageName/h/h.txt" "$imageName/h/mapping.txt"
+./a.out $level_count "$imageName/v/v.txt" "$imageName/v/mapping.txt"
+./a.out $level_count "$imageName/d/d.txt" "$imageName/d/mapping.txt"
+./a.out $level_count "$imageName/h/h.txt" "$imageName/h/mapping.txt"
 
 
 #3
 g++ -std=c++11 create_transform.cc ../blockImage.cc ../compareImages.cc
-./a.out "$imageName/v/mapping.txt" 6 "$imageName/v/new_v.txt"
-./a.out "$imageName/d/mapping.txt" 6 "$imageName/d/new_d.txt"
-./a.out "$imageName/h/mapping.txt" 6 "$imageName/h/new_h.txt"
+./a.out "$imageName/v/mapping.txt" $level_count "$imageName/v/new_v.txt"
+./a.out "$imageName/d/mapping.txt" $level_count "$imageName/d/new_d.txt"
+./a.out "$imageName/h/mapping.txt" $level_count "$imageName/h/new_h.txt"
 
 
 #4
 g++ -std=c++11 combineTransforms.cc
 ./a.out "$imageName/a/a.txt" "$imageName/h/new_h.txt"  "$imageName/v/new_v.txt" "$imageName/d/new_d.txt" "$imageName/combined.txt"
 
-#5 doesn't quite work
+#5
+matlab -r "recreateWaveletImage $imageName/combined.txt";

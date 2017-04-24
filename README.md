@@ -48,6 +48,10 @@ g++ -std=c++11 -o (de)compress (de)compress.cc ../blockImage.cc ../compareImages
 
 Some additional requirements and commands may be required for the directories. Those requirements will be described when appropriate.
 
+TODO:
+input type
+can only handle mod 8 by 8 images...
+
 <h2>
 <a name="lf">
 Library Features
@@ -145,7 +149,7 @@ ii. regularFractalWithRotation
 </a>
 </h2>
 
-This feature is similar to regularFractal, except now the optimal mappings from 16 by 16 reduced blocks to 8 by 8 blocks can include rotation in addition to scaling and grayscale shift. The mappings now also need to store how the 16 by 16 block was rotated. This adds an addition 2 bits per 8 by 8 block. A very negligible cost given that the decompressed image now looks much better than regularFractal(look at the lips and eyes). 
+This feature is similar to regularFractal, except now the optimal mappings from 16 by 16 reduced blocks to 8 by 8 blocks can include rotation in addition to scaling and grayscale shift. The mappings now also need to store how the 16 by 16 block was rotated. This adds an additional 2 bits per 8 by 8 block. A very negligible cost given that the decompressed image now looks much better than regularFractal(look at the lips and eyes). 
 
 ![image](sample_images/regularWithRotation.png)
 <h2>
@@ -160,26 +164,28 @@ A 2 level wavelet decomposition may look something like this:
 
 Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). When reconstructing the parent blocks only given the smallest child blocks (top left), we recreate the parent sub blocks by iterating a single time by multiplying child blocks by scaling factor and mapping those onto parent blocks (unlike in fractal mapping where the decompression requires about 20 iterations).
 
-Here is an example of lenna compressed using the wavelet approach and then decompressed:
+Here is an example of lenna compressed using the wavelet approach and then decompressed. The wavelet decompression consisted of 4 levels where the bottom child was split into 1 by 1 pixel blocks. (Doing this caused a very slow runtime):
 
-![image](sample_images/lenna_approx_3.png)
+![image](sample_images/wavelet_4.png)
 
-The results are not the best, but that can be blamed on the amount of levels used in the decomposition as well as the properties of Haar-wavelet decomposition. The original 'lenna' in png format is about 264069 bytes, the wavelet decomposition takes up (TODO)
+The results are not the best, but that can be blamed on the amount of levels used in the decomposition as well as the properties of Haar-wavelet decomposition.  The original 'lenna' in png format is about 264069 bytes, the stored mapping in this case takes up 173279 bytes which is poor given the results. Here is a more compact compression using 6 levels with a total mapping taking up 16326 bytes:
+
+![image](sample_images/wavelet_6.png)
+
 <h2>
 <a name="lm">
 iv. letterMapping
 </a>
 </h2>
 
-Given an image and a set of blocks, we can approximate the image with the best fitting blocks from another set image. In the example below we approximate 'lenna' with alphabet characters in 8 by 8 pixel blocks. The letter that is chosen to approximate an 8 by 8 block within 'lenna' is the letter than reduces the error when subtracting the difference between letter block and image block.
+Given an image and a set of blocks (block map), we can approximate the image with the best fitting blocks from the block map. In the example below we approximate 'lenna' with alphabet characters. The letter that is chosen to approximate an 8 by 8 block within 'lenna' is the letter than reduces the Euclidean norm when subtracting the difference between letter block and image block.
 
 
-Original block map gathered from here:
+Block map:
 
 ![image](sample_images/letters.png)
 
 Lenna approximation by using best fitting blocks from block map:
-
 
 
 ![image](sample_images/lenna_letter.png)
