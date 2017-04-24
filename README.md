@@ -148,20 +148,20 @@ To converge to the lenna image we need to set the 8 by 8 block original split as
 <h5>
 Run:
 </h5>
-Compress (creates map\_output\_extension file that contains mapping):
+Compress (creates `map_output_extension` file that contains mapping):
 
 
 ```
 cd regularFractal
-g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../regularFractalMapping.cc
+g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../compareImages.cc
 ./compress <input_file.pnm> <map_output_extension>
 ```
 
-Decompress (creates image\_output\_name\_extension.pnm):
+Decompress (creates `image_output_name_extension.pnm`):
 
 ```
 cd regularFractal
-g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../regularFractalMapping.cc
+g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../compareImages.cc
 ./decompress <map_output_extension> <starting_image_pnm> <image_output_name_extension>
 ```
 
@@ -178,19 +178,19 @@ This feature is similar to regularFractal, except now the optimal mappings from 
 Run:
 </h5>
 
-Compress (creates map\_output\_extension file that contains mapping):
+Compress (creates `map_output_extension` file that contains mapping):
 
 ```
 cd regularFractalWithRotation
-g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../regularFractalMapping.cc
+g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../compareImages.cc
 ./compress <input_file.pnm> <map_output_extension>
 ```
 
-Decompress (creates image\_output\_name\_extension.pnm):
+Decompress (creates `image_output_name_extension.pnm`):
 
 ```
 cd regularFractalWithRotation
-g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../regularFractalMapping.cc
+g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../compareImages.cc
 ./decompress <map_output_extension> <starting_image_pnm> <image_output_name_extension>
 ```
 
@@ -299,5 +299,20 @@ Lenna approximation by using best fitting blocks from block map:
 
 
 Hypothetically, a 512 by 512 pixel image with 4096 - 8 by 8 pixel blocks that takes up 264069 bytes in png format can be stored with 4096 characters. Each character takes a byte to store implying 4096 bytes of storage overall per image. You can observe that this compression comes with a huge expense in accuracy. Here is a [video](https://youtu.be/nBnlKsu7sYI) where each frame went through the letterMapping.
+
+<h5>
+Run:
+</h5>
+
+This code does not have a compress and decompress stage but instead just does the transformation in one stage. 'letters.pnm' is used as the block map (you can subsitute any other pnm file to replace it).
+
+```
+cd letterMapping
+g++ map_image.cc -std=c++11 ../blockImage.cc ../compareImages.cc -o map
+./map <file_input.pnm> <output_extension>
+```
+
+Produces `output_extension` file (include .pnm in `output_extension`)
+
 
 
