@@ -149,17 +149,22 @@ To converge to the lenna image we need to set the 8 by 8 block original split as
 Run:
 </h5>
 Compress (creates map\_output\_extension file that contains mapping):
+
+
 ```
 cd regularFractal
 g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../regularFractalMapping.cc
 ./compress <input_file.pnm> <map_output_extension>
 ```
+
 Decompress (creates image\_output\_name\_extension.pnm):
+
 ```
 cd regularFractal
 g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../regularFractalMapping.cc
 ./decompress <map_output_extension> <starting_image_pnm> <image_output_name_extension>
 ```
+
 <h2>
 <a name="rfwr">
 ii. regularFractalWithRotation
@@ -172,13 +177,17 @@ This feature is similar to regularFractal, except now the optimal mappings from 
 <h5>
 Run:
 </h5>
+
 Compress (creates map\_output\_extension file that contains mapping):
+
 ```
 cd regularFractalWithRotation
 g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../regularFractalMapping.cc
 ./compress <input_file.pnm> <map_output_extension>
 ```
+
 Decompress (creates image\_output\_name\_extension.pnm):
+
 ```
 cd regularFractalWithRotation
 g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../regularFractalMapping.cc
