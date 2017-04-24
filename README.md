@@ -133,6 +133,7 @@ For each 8 by 8 block in original 8 by 8 split we replace the block with the app
 4.
 </h6>
 After completing one round of mapping our 8 by 8 block split image will look something like this:
+
 ![image](sample_images/single_round.png)
 
 
