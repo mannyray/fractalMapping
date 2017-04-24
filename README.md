@@ -144,6 +144,22 @@ To converge to the lenna image we need to set the 8 by 8 block original split as
 
 ![image](sample_images/regular.png)
 
+
+<h5>
+Run:
+</h5>
+Compress (creates map\_output\_extension file that contains mapping):
+```
+cd regularFractal
+g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../regularFractalMapping.cc
+./compress <input_file.pnm> <map_output_extension>
+```
+Decompress (creates image\_output\_name\_extension.pnm):
+```
+cd regularFractal
+g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../regularFractalMapping.cc
+./decompress <map_output_extension> <starting_image_pnm> <image_output_name_extension>
+```
 <h2>
 <a name="rfwr">
 ii. regularFractalWithRotation
@@ -151,6 +167,24 @@ ii. regularFractalWithRotation
 </h2>
 
 This feature is similar to regularFractal, except now the optimal mappings from 16 by 16 reduced blocks to 8 by 8 blocks can include rotation in addition to scaling and grayscale shift. The mappings now also need to store how the 16 by 16 block was rotated. This adds an additional 2 bits per 8 by 8 block. A very negligible cost given that the decompressed image now looks much better than regularFractal(look at the lips and eyes). 
+
+
+<h5>
+Run:
+</h5>
+Compress (creates map\_output\_extension file that contains mapping):
+```
+cd regularFractalWithRotation
+g++ -std=c++11 -o compress compress.cc ../blockImage.cc ../regularFractalMapping.cc
+./compress <input_file.pnm> <map_output_extension>
+```
+Decompress (creates image\_output\_name\_extension.pnm):
+```
+cd regularFractalWithRotation
+g++ -std=c++11 -o decompress decompress.cc ../blockImage.cc ../regularFractalMapping.cc
+./decompress <map_output_extension> <starting_image_pnm> <image_output_name_extension>
+```
+
 
 ![image](sample_images/regularWithRotation.png)
 <h2>
@@ -172,6 +206,69 @@ Here is an example of lenna compressed using the wavelet approach and then decom
 The results are not the best, but that can be blamed on the amount of levels used in the decomposition as well as the properties of Haar-wavelet decomposition.  The original 'lenna' in png format is about 264069 bytes, the stored mapping in this case takes up 173279 bytes which is poor given the results. Here is a more compact compression using 6 levels with a total mapping taking up 16326 bytes:
 
 ![image](sample_images/wavelet_6.png)
+
+
+
+<h5>
+Run:
+</h5>
+There is matlab involved in breaking the image down in addition to the C++ code. As a result the (de)compression steps are replaced with bash scripts. There is an additional restriction that images be of size 512 by 512.
+
+
+Compress:
+
+Creates the following
+
+```
+image_name---|
+             |a------|a.txt
+             |d------|d.txt
+                     |mapping.txt
+             |h------|h.txt
+                     |mapping.txt                    
+             |v------|v.txt
+                     |mapping.txt
+```
+
+The compressed data is stored in the `*mapping.txt` and `a.txt`. 
+
+image_name is the 'image' of 'path/to/image.pnm'.
+
+```
+cd wavelet
+./compress.sh path/to/image.pnm
+```
+Decompress :
+
+
+We need the wavelet directory to have the following layout
+```
+image_name---|
+             |a------|a.txt
+             |d------|mapping.txt
+             |h------|mapping.txt
+             |v------|mapping.txt
+```
+
+before running:
+
+```
+cd wavelet
+./decompress folder_name
+```
+
+It will create 'result.png' in wavelet directory and modify previous file structure to:
+```
+image_name---|combined.txt
+             |a------|a.txt
+             |d------|new_d.txt
+                     |mapping.txt
+             |h------|new_h.txt
+                     |mapping.txt                    
+             |v------|new_v.txt
+                     |mapping.txt
+```
+
 
 <h2>
 <a name="lm">

@@ -11,8 +11,8 @@ using matlab
 */
 
 int main(int argc, char *argv[]){
-	if ( argc != 6 ){
-    	cout<<"usage: "<< argv[0] << " <a file> <h file> <v file> <d file> <outputfile>\n";
+	if ( argc != 7 ){
+    	cout<<"usage: "<< argv[0] << " <a file> <h file> <v file> <d file> <outputfile> <level_count>\n";
     	return -1;
 	}
 	
@@ -30,14 +30,19 @@ int main(int argc, char *argv[]){
 	ifstream d_infile(file_name.c_str());
 	
 	
+	string level_string = argv[6];
+	stringstream num_converter(level_string);
+	int level; num_converter>>level;
+	
+	
 	stringstream sss(argv[5]);
-	string output_extension = sss.str();	
+	string output_extension = sss.str();
+	
+	
+		
 	ofstream ofile(output_extension);
-	
-	
-	
 	int dimension = 0;int garbage;double number;
-	int level = 6;
+
 	for(int i = 0; i < level; i++){
 		a_infile>>garbage>>dimension>>dimension>>garbage;
 		h_infile>>garbage>>dimension>>dimension>>garbage;
