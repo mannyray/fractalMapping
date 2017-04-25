@@ -209,7 +209,7 @@ A 2 level wavelet decomposition may look something like this:
 
 ![image](sample_images/wavelet.png)
 
-Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). When reconstructing the parent blocks only given the smallest child blocks (top left), we recreate the parent sub blocks by iterating a single time by multiplying child blocks by scaling factor and mapping those onto parent blocks (unlike in fractal mapping where the decompression requires about 20 iterations).
+Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). The blocks in the smaller child level get expanded to match the block size in the parent level (in our diagram child level has 1 by 1 block size and parent has 2 by 2 block size).  When reconstructing the parent blocks only given the smallest child blocks (top left), we recreate the parent sub blocks by iterating a single time by multiplying child blocks by scaling factor and mapping those onto parent blocks (unlike in fractal mapping where the decompression requires about 20 iterations).
 
 Here is an example of lenna compressed using the wavelet approach and then decompressed. The wavelet decompression consisted of 4 levels where the bottom child was split into 1 by 1 pixel blocks. (Doing this caused a very slow runtime):
 
