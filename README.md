@@ -46,11 +46,15 @@ To compile the compress/decompress programs (within directory the program is loc
 g++ -std=c++11 -o (de)compress (de)compress.cc ../blockImage.cc ../compareImages.cc
 ```
 
-Some additional requirements and commands may be required for the directories. Those requirements will be described when appropriate.
+Some additional requirements and commands may be required for the directories. Those requirements will be described when appropriate. 
 
-TODO:
-input type
-can only handle mod 8 by 8 images...
+
+This library deals with input and output styles of images that are of PNM format with <b>mod 8 height and mod 8 width</b>. Code can be modified to handle images of other dimensions (by filling in non mod 8 dimensions sides with tailing whitespace columns/rows). The PNM format used consists of a text file with .pnm extension where the first line contains: `P2 image_width image_height MaxGrey` followed by `image_width * image_height` lines with single integer (0 <= integer <= MaxGrey) representing pixel value. Pixel values in file are recorded to the equivalent way of reading image pixels from left to right and then down one row (like reading a book).
+
+
+Sample pnm images can be found in `sample_images` directory.
+
+To convert png file to pnm format do the following:
 
 <h2>
 <a name="lf">
