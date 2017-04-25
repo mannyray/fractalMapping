@@ -206,6 +206,9 @@ The code in this section requires the use of matlab in order to create the Haar-
 A 2 level wavelet decomposition may look something like this: 
 ![image](https://upload.wikimedia.org/wikipedia/commons/e/e0/Jpeg2000_2-level_wavelet_transform-lichtenstein.png)
 
+
+![image](sample_images/wavelet.png)
+
 Mappings between blocks within a child level and blocks within a parent level are constructed in a similar way to what was done in the fractalMapping section. However, this time we only compute the scaling factor (instead of simple linear regression, we find the line of best fit that crosses the origin). When reconstructing the parent blocks only given the smallest child blocks (top left), we recreate the parent sub blocks by iterating a single time by multiplying child blocks by scaling factor and mapping those onto parent blocks (unlike in fractal mapping where the decompression requires about 20 iterations).
 
 Here is an example of lenna compressed using the wavelet approach and then decompressed. The wavelet decompression consisted of 4 levels where the bottom child was split into 1 by 1 pixel blocks. (Doing this caused a very slow runtime):
