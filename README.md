@@ -54,7 +54,14 @@ This library deals with input and output styles of images that are of PNM format
 
 Sample pnm images can be found in `sample_images` directory.
 
-To convert png file to pnm format do the following:
+To convert jpg file to pnm format run the following:
+
+```
+convert lll.jpeg RESULT.pgm
+g++ -std=c++11 converter.cc -o convert
+./convert RESULT.pgm sample.pnm
+```
+converter script is located under `other_scripts`.
 
 <h2>
 <a name="lf">
